@@ -6,7 +6,10 @@ import zipfile
 
 from sqlalchemy import create_engine
 
-POSTGRES_URL = os.environ['POSTGRES_URL']
+POSTGRES_DB = os.environ['DATABASE']
+POSTGRES_USER = os.environ['USER']
+POSTGRES_PASSWORD = os.environ['PASSWORD']
+POSTGRES_HOST = os.environ['HOSTNAME']
 
 def download_matches(matches_url):
     response = requests.get(matches_url)
@@ -20,6 +23,8 @@ def download_matches(matches_url):
                 zip_ref.extract(info, '/tmp/matches/')
 
 def load_data_to_db():
+    POSTGRES_URL = f'postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}/{POSTGRES_DB}'
+
     engine = create_engine(POSTGRES_URL)
     conn = engine.connect()
 
