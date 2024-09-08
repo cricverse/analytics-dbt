@@ -33,7 +33,7 @@ def load_data_to_db():
             data = f.read()
             conn.execute(f"INSERT INTO raw.deliveries VALUES {data}")
 
-def lambda_handler(event):
+def lambda_handler(event, context):
     url = event['url']
 
     download_matches(url)
