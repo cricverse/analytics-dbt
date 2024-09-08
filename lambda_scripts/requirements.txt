@@ -1,3 +1,0 @@
-requests
-sqlalchemy
-aws-psycopg2
