@@ -1,6 +1,5 @@
 import io
 import os
-import pandas as pd
 import re
 import requests
 import sqlalchemy
@@ -10,103 +9,97 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from dotenv import load_dotenv
 from sqlalchemy import text
+from sqlalchemy.orm import sessionmaker
 
+from models.match import Match, Base
+
+# Load environment variables
 load_dotenv()
 
 DB_HOST = os.environ['HOSTNAME']
 DB_NAME = os.environ['DATABASE']
 DB_USER = os.environ['USER']
 DB_PASSWORD = os.environ['PASSWORD']
-
 MATCHES_DIR = 'data/matches/'
-MATCHES_INFO_DIR = 'data/matches_info/'
 
-@contextmanager
-def get_db_connection():
-    engine = sqlalchemy.create_engine(f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}")
-    connection = engine.connect()
+class DatabaseManager:
+    """Handles all database-related operations."""
+    def __init__(self, user, password, host, dbname):
+        self.engine = sqlalchemy.create_engine(f"postgresql://{user}:{password}@{host}/{dbname}")
 
-    try:
-        with connection.begin():
-            yield connection
-    finally:
-        connection.close()
-        engine.dispose()
+        with self.engine.connect() as connection:
+            connection.execute(text('CREATE SCHEMA IF NOT EXISTS raw'))
 
-def download_matches(matches_url):
-    response = requests.get(matches_url)
-    zip_file = io.BytesIO(response.content)
+        Base.metadata.create_all(self.engine)
 
-    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
-        for info in zip_ref.infolist():
-            if re.search(r"info", info.filename):
-                zip_ref.extract(info, MATCHES_INFO_DIR)
-            elif re.search(r"csv", info.filename):
-                zip_ref.extract(info, MATCHES_DIR)
+    @contextmanager
+    def session_scope(self):
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+        try:
+            yield session
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
 
-def insert_file_data(directory, file, table_name, conn):
-    df = pd.read_csv(os.path.join(directory, file), header=0)
-    try:
-        df.to_sql(table_name, conn, schema='raw', if_exists='append', index=False)        
 
-    except Exception:
-        return
+    def insert_file_data(self, json_path):        
+        match = Match.from_json(json_path)
 
-def load_files_to_db(directory, table_name, conn):
-    files = os.listdir(directory)
+        with self.session_scope() as session:
+            session.add(match)
 
-    with ThreadPoolExecutor() as executor:
-        futures = [executor.submit(insert_file_data, directory, file, table_name, conn) for file in files]
-        for future in futures:
-            future.result()
-
-def load_data_to_db():
-    with get_db_connection() as conn:
         
-        # Load match deliveries data
-        load_files_to_db(MATCHES_DIR, 'deliveries', conn)
+class MatchDataManager:
+    """Handles downloading and loading match data files."""
+    def __init__(self, db_manager, matches_dir=MATCHES_DIR):
+        self.db_manager = db_manager
+        self.matches_dir = matches_dir
 
-def check_and_create_table():
-    with get_db_connection() as conn:
-        conn.execute(text("""
-            CREATE SCHEMA IF NOT EXISTS raw;              
-            
-            CREATE TABLE IF NOT EXISTS raw.deliveries (
-            match_id INT,
-            season INT,
-            start_date DATE,
-            venue VARCHAR(255),
-            innings INT,
-            ball INT,
-            batting_team VARCHAR(255),
-            bowling_team VARCHAR(255),
-            striker VARCHAR(255),
-            non_striker VARCHAR(255),
-            bowler VARCHAR(255),
-            runs_off_bat INT,
-            extras INT,
-            wides INT,
-            noballs INT,
-            byes INT,
-            legbyes INT,
-            penalty INT,
-            wicket_type VARCHAR(255),
-            player_dismissed VARCHAR(255),
-            other_wicket_type VARCHAR(255),
-            other_player_dismissed VARCHAR(255)
-            )
-        """))
+    def download_and_extract_matches(self, matches_url):
+        response = requests.get(matches_url)
+        zip_file = io.BytesIO(response.content)
+        with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+            print(len(zip_ref.namelist()))
+            for info in zip_ref.infolist():
+                filename = info.filename
+                if re.search(r'json$', filename):
+                    zip_ref.extract(info, self.matches_dir)
 
+    def load_files_to_db(self):
+        files = os.listdir(self.matches_dir)
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(self.db_manager.insert_file_data, os.path.join(self.matches_dir, file)) for file in files]
+            for future in futures:
+                future.result()
+
+# Lambda handler refactored
 def lambda_handler(event, context):
-    url = event['url']
+    url = event.get('url')
 
-    # download_matches(url)
-    check_and_create_table()
-    load_data_to_db()
+    if url:
+        db_manager = DatabaseManager(DB_USER, DB_PASSWORD, DB_HOST, DB_NAME)
+        match_data_manager = MatchDataManager(db_manager)
 
-    return {
-        'statusCode': 200,
-        'body': 'Matches downloaded successfully'
-    }
+        # Download matches and process data
+        match_data_manager.download_and_extract_matches(url)
+        # match_data_manager.load_files_to_db()
 
-lambda_handler({'url': 'https://cricsheet.org/downloads/recently_played_2_male_csv2.zip'}, None)
+        return {
+            'statusCode': 200,
+            'body': 'Matches downloaded and data loaded successfully.'
+        }
+    else:
+        return {
+            'statusCode': 400,
+            'body': 'URL not provided.'
+        }
+
+
+# Example test invocation
+if __name__ == '__main__':
+    test_event = {'url': 'https://cricsheet.org/downloads/recently_played_2_male_json.zip'}
+    print(lambda_handler(test_event, None))

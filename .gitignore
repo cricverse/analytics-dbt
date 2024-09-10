@@ -2,6 +2,7 @@
 target/
 dbt_packages/
 logs/
+data/
 
 *.csv
 *.zip
@@ -9,3 +10,5 @@ logs/
 package/
 
 .env
+
+.vscode/
