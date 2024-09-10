@@ -7,3 +7,5 @@ logs/
 *.zip
 
 package/
+
+.env

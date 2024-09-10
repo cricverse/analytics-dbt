@@ -1,0 +1,1 @@
+SELECT DISTINCT match_id FROM raw.deliveries;
