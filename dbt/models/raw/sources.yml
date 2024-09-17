@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: public
+    tables:
+      - name: raw_match_info
+        description: "Raw data for match information."
+        columns:
+          - name: match_id
+            description: "Unique identifier for the match."
+          - name: match_data
+            description: "JSONB field containing the match data."

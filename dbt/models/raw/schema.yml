@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: raw_matches
+    description: >
+      This model contains the raw data for match information.
+    columns:
+      - name: match_id
+        description: >
+          The unique identifier for the match.
+        tests:
+          - unique
+          - not_null
+      - name: match_data
+        description: >
+          JSONB field containing the match data.

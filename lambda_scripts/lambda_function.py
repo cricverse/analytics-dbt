@@ -1,4 +1,5 @@
 import io
+import json
 import os
 import re
 import requests
@@ -10,8 +11,6 @@ from contextlib import contextmanager
 from dotenv import load_dotenv
 from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
-
-from models.match import Match, Base
 
 # Load environment variables
 load_dotenv()
@@ -28,14 +27,19 @@ class DatabaseManager:
         self.engine = sqlalchemy.create_engine(f"postgresql://{user}:{password}@{host}/{dbname}")
 
         with self.engine.connect() as connection:
-            connection.execute(text('CREATE SCHEMA IF NOT EXISTS raw'))
-
-        Base.metadata.create_all(self.engine)
-
+            connection.execute(text('''
+                CREATE TABLE IF NOT EXISTS raw_match_info (
+                    match_id INTEGER PRIMARY KEY,
+                    match_data JSONB
+                )
+            '''))
+            connection.commit()
+        
     @contextmanager
     def session_scope(self):
         Session = sessionmaker(bind=self.engine)
         session = Session()
+
         try:
             yield session
             session.commit()
@@ -45,13 +49,15 @@ class DatabaseManager:
         finally:
             session.close()
 
-
     def insert_file_data(self, json_path):        
-        match = Match.from_json(json_path)
-
-        with self.session_scope() as session:
-            session.add(match)
-
+        with open(json_path, 'r') as file:
+            match_data = json.loads(file.read())['info']
+            match_id = os.path.basename(json_path).split('.')[0]
+            with self.session_scope() as session:
+                session.execute(text('''
+                    INSERT INTO raw_match_info (match_id, match_data)
+                    VALUES (:match_id, :match_data)
+                '''), {'match_id': match_id, 'match_data': json.dumps(match_data)})
         
 class MatchDataManager:
     """Handles downloading and loading match data files."""
@@ -63,7 +69,6 @@ class MatchDataManager:
         response = requests.get(matches_url)
         zip_file = io.BytesIO(response.content)
         with zipfile.ZipFile(zip_file, 'r') as zip_ref:
-            print(len(zip_ref.namelist()))
             for info in zip_ref.infolist():
                 filename = info.filename
                 if re.search(r'json$', filename):
@@ -86,7 +91,7 @@ def lambda_handler(event, context):
 
         # Download matches and process data
         match_data_manager.download_and_extract_matches(url)
-        # match_data_manager.load_files_to_db()
+        match_data_manager.load_files_to_db()
 
         return {
             'statusCode': 200,
@@ -101,5 +106,5 @@ def lambda_handler(event, context):
 
 # Example test invocation
 if __name__ == '__main__':
-    test_event = {'url': 'https://cricsheet.org/downloads/recently_played_2_male_json.zip'}
+    test_event = {'url': 'https://cricsheet.org/downloads/recently_added_2_male_json.zip'}
     print(lambda_handler(test_event, None))
