@@ -11,6 +11,7 @@ from contextlib import contextmanager
 from dotenv import load_dotenv
 from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import IntegrityError
 
 # Load environment variables
 load_dotenv()
@@ -53,11 +54,15 @@ class DatabaseManager:
         with open(json_path, 'r') as file:
             match_data = json.loads(file.read())['info']
             match_id = os.path.basename(json_path).split('.')[0]
-            with self.session_scope() as session:
-                session.execute(text('''
-                    INSERT INTO raw_match_info (match_id, match_data)
-                    VALUES (:match_id, :match_data)
-                '''), {'match_id': match_id, 'match_data': json.dumps(match_data)})
+            try:
+                with self.session_scope() as session:
+                    session.execute(text('''
+                        INSERT INTO raw_match_info (match_id, match_data)
+                        VALUES (:match_id, :match_data)
+                    '''), {'match_id': match_id, 'match_data': json.dumps(match_data)})
+            except IntegrityError:
+                print(f"Match with ID {match_id} already exists in the database.")
+                return
         
 class MatchDataManager:
     """Handles downloading and loading match data files."""
@@ -106,5 +111,5 @@ def lambda_handler(event, context):
 
 # Example test invocation
 if __name__ == '__main__':
-    test_event = {'url': 'https://cricsheet.org/downloads/recently_added_2_male_json.zip'}
+    test_event = {'url': 'https://cricsheet.org/downloads/2019_male_json.zip'}
     print(lambda_handler(test_event, None))
