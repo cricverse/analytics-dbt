@@ -1,10 +1,3 @@
-name: CI Pipeline
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   dbt-run:
     runs-on: ubuntu-latest
@@ -20,6 +13,12 @@ jobs:
       - name: Install dbt
         run: |
           pip install dbt-postgres
+
+      - name: Set environment variables
+        run: |
+          export DB_HOST=${{ secrets.DB_HOST }}
+          export DB_USER=${{ secrets.DB_USER }}
+          export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
 
       - name: Run dbt
         run: dbt run --profiles-dir dbt/
