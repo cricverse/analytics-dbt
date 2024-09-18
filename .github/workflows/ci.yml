@@ -1,3 +1,10 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   dbt-run:
     runs-on: ubuntu-latest
