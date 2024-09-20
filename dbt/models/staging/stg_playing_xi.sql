@@ -22,7 +22,7 @@ registry AS
         player_id
     FROM
         raw_data,
-        jsonb_each(match_data->'registry'->'people') AS registry(player_name, player_id)
+        jsonb_each_text(match_data->'registry'->'people') AS registry(player_name, player_id)
 )
 
 SELECT

@@ -18,13 +18,25 @@ registry_data AS (
         player_id
     FROM raw_data,
          jsonb_each_text(match_data->'registry'->'people') AS registry(player_name, player_id)
+),
+
+player_teams AS (
+    SELECT
+        r.player_id,
+        p.player_name,
+        p.team_name,
+        t.team_type
+    FROM players_data p
+    LEFT JOIN registry_data r
+    ON p.player_name = r.player_name
+    JOIN {{ ref('stg_teams') }} t
+    ON p.team_name = t.team_name
 )
 
 SELECT
-    r.player_id,
-    p.player_name,
-    ARRAY_AGG(DISTINCT p.team_name) AS team_name
-FROM players_data p
-LEFT JOIN registry_data r
-ON p.player_name = r.player_name
-GROUP BY 1, 2
+    player_id,
+    player_name,
+    team_name,
+    team_type
+FROM player_teams
+GROUP BY 1, 2, 3, 4
