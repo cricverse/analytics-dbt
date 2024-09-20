@@ -19,8 +19,8 @@ SELECT
     match_data->'toss'->>'winner' AS toss_winner,
     match_data->'toss'->>'decision' AS toss_decision,
     match_data->'outcome'->>'result' AS outcome_type,
-    match_data->'teams'->0 AS team1,
-    match_data->'teams'->1 AS team2,
+    match_data->'teams'->>0 AS team1,
+    match_data->'teams'->>1 AS team2,
     -- -- Handling winner, win_type, and win_by
     COALESCE(match_data->'outcome'->>'winner', match_data->'outcome'->>'eliminator') AS winner,
 
