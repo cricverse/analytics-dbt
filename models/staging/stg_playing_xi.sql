@@ -3,19 +3,17 @@ WITH raw_data AS (
     FROM {{ ref('raw_matches') }}
 ),
 
-players AS
-(
+players AS (
     SELECT
         match_id,
         team_name,
-        UNNEST(ARRAY[jsonb_array_elements_text(players)]) AS player_name
+        jsonb_array_elements_text(players) AS player_name
     FROM 
         raw_data,
         jsonb_each(match_data->'players') AS teams(team_name, players)
 ),
 
-registry AS
-(
+registry AS (
     SELECT
         match_id,
         player_name,
@@ -27,8 +25,9 @@ registry AS
 
 SELECT
     players.match_id,
-    team_name,
-    player_id
+    registry.player_id,
+    players.player_name,
+    players.team_name
 FROM players
 LEFT JOIN registry
 ON players.match_id = registry.match_id

@@ -29,9 +29,12 @@ class DatabaseManager:
 
         with self.engine.connect() as connection:
             connection.execute(text('''
+                DROP TABLE IF EXISTS raw_match_info CASCADE;
                 CREATE TABLE IF NOT EXISTS raw_match_info (
                     match_id INTEGER PRIMARY KEY,
-                    match_data JSONB
+                    match_data JSONB,
+                    deliveries JSONB,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             '''))
             connection.commit()
@@ -52,14 +55,14 @@ class DatabaseManager:
 
     def insert_file_data(self, json_path):        
         with open(json_path, 'r') as file:
-            match_data = json.loads(file.read())['info']
+            match_data = json.loads(file.read())
             match_id = os.path.basename(json_path).split('.')[0]
             try:
                 with self.session_scope() as session:
                     session.execute(text('''
-                        INSERT INTO raw_match_info (match_id, match_data)
-                        VALUES (:match_id, :match_data)
-                    '''), {'match_id': match_id, 'match_data': json.dumps(match_data)})
+                        INSERT INTO raw_match_info (match_id, match_data, deliveries)
+                        VALUES (:match_id, :match_data, :deliveries)
+                    '''), {'match_id': match_id, 'match_data': json.dumps(match_data['info']), 'deliveries': json.dumps(match_data['innings'])})
             except IntegrityError:
                 print(f"Match with ID {match_id} already exists in the database.")
                 return
@@ -108,8 +111,7 @@ def lambda_handler(event, context):
             'body': 'URL not provided.'
         }
 
-
 # Example test invocation
 if __name__ == '__main__':
-    test_event = {'url': 'https://cricsheet.org/downloads/2019_male_json.zip'}
+    test_event = {'url': 'https://cricsheet.org/downloads/2011_male_json.zip'}
     print(lambda_handler(test_event, None))
