@@ -17,7 +17,7 @@ SELECT
     match_data->'season' AS season,
     match_data->'player_of_match' AS player_of_match,
     match_data->'dates' AS match_dates,
-    JSON_ARRAY_LENGTH(match_data->'dates') AS num_days,
+    JSONB_ARRAY_LENGTH(match_data->'dates') AS num_days,
     match_data->'venue' AS venue,
     match_data->'toss'->>'winner' AS toss_winner,
     match_data->'toss'->>'decision' AS toss_decision,

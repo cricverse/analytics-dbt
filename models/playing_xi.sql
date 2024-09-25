@@ -7,10 +7,10 @@ players AS (
     SELECT
         match_id,
         team_name,
-        jsonb_array_elements_text(players) AS player_name
+        JSONB_ARRAY_ELEMENTS_TEXT(players) AS player_name
     FROM 
         raw_data,
-        jsonb_each(match_data->'players') AS teams(team_name, players)
+        JSONB_EACH(match_data->'players') AS teams(team_name, players)
 ),
 
 registry AS (
@@ -20,7 +20,7 @@ registry AS (
         player_id
     FROM
         raw_data,
-        jsonb_each_text(match_data->'registry'->'people') AS registry(player_name, player_id)
+        JSONB_EACH_TEXT(match_data->'registry'->'people') AS registry(player_name, player_id)
 )
 
 SELECT
