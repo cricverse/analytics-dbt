@@ -33,7 +33,11 @@ models:
       - name: match_type_num
         description: "Number associated with the match type"
       - name: team_type
-        description: "Type of teams playing (e.g., international, domestic)"
+        description: "Type of teams playing (e.g., international, club)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["international", "club"]
       - name: format
         description: "Format of the match"
       - name: season
