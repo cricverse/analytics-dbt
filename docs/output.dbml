@@ -1,0 +1,46 @@
+//Tables (based on the selection criteria)
+//--configured at schema: development.dbt
+Table "match_details" {
+  "match_id" "unknown" [note: "Unique identifier for each match"]
+  "series_name" "unknown" [note: "Name of the series or tournament"]
+  "match_num" "unknown" [note: "Match number within the series"]
+  "match_stage" "unknown" [note: "Stage of the match (e.g., group, knockout)"]
+  "match_type" "unknown" [note: "Type of match (e.g., T20, ODI, Test)"]
+  "match_type_num" "unknown" [note: "Number associated with the match type"]
+  "team_type" "unknown" [note: "Type of teams playing (e.g., international, domestic)"]
+  "format" "unknown" [note: "Format of the match"]
+  "season" "unknown" [note: "Season in which the match was played"]
+  "player_of_match" "unknown" [note: "Player of the match"]
+  "match_dates" "unknown" [note: "Dates on which the match was played"]
+  "num_days" "unknown" [note: "Number of days the match lasted"]
+  "venue" "unknown" [note: "Venue where the match was played"]
+  "toss_winner" "unknown" [note: "Team that won the toss"]
+  "toss_decision" "unknown" [note: "Decision made by the toss winner (bat/field)"]
+  "outcome" "unknown" [note: "Outcome of the match"]
+  "team1" "unknown" [note: "First team in the match"]
+  "team2" "unknown" [note: "Second team in the match"]
+  "winner" "unknown" [note: "Team that won the match"]
+  "win_by_wickets" "unknown" [note: "Number of wickets by which the match was won"]
+  "win_by_runs" "unknown" [note: "Number of runs by which the match was won"]
+  "win_by_innings" "unknown" [note: "Number of innings by which the match was won"]
+
+  Note: "Detailed information about each cricket match"
+}
+//--configured at schema: development.dbt
+Table "playing_xi" {
+  "match_id" "unknown" [note: "Unique identifier for each match"]
+  "player_id" "unknown" [note: "Unique identifier for each player"]
+  "player_name" "unknown" [note: "Name of the player"]
+  "team_name" "unknown" [note: "Name of the team the player belongs to"]
+
+  Note: "Information about players in each match's playing XI"
+}
+//--configured at schema: development.dbt
+Table "raw_matches" {
+  "match_id" "unknown" [note: "Unique identifier for each match"]
+  "match_data" "unknown" [note: "JSON data containing all match details"]
+
+  Note: "Raw match data from the source"
+}
+//Refs (based on the DBT Relationship Tests)
+Ref: "playing_xi"."match_id" > "match_details"."match_id"

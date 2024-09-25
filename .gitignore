@@ -12,3 +12,8 @@ package/
 .env
 
 .vscode/
+
+.DS_Store
+
+profiles.yml
+.user.yml

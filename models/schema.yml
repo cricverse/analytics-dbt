@@ -1,0 +1,105 @@
+version: 2
+
+models:
+  - name: raw_matches
+    description: "Raw match data from the source"
+    columns:
+      - name: match_id
+        description: "Unique identifier for each match"
+        tests:
+          - unique
+          - not_null
+      - name: match_data
+        description: "JSON data containing all match details"
+        tests:
+          - not_null
+
+  - name: match_details
+    description: "Detailed information about each cricket match"
+    columns:
+      - name: match_id
+        description: "Unique identifier for each match"
+        tests:
+          - unique
+          - not_null
+      - name: series_name
+        description: "Name of the series or tournament"
+      - name: match_num
+        description: "Match number within the series"
+      - name: match_stage
+        description: "Stage of the match (e.g., group, knockout)"
+      - name: match_type
+        description: "Type of match (e.g., T20, ODI, Test)"
+      - name: match_type_num
+        description: "Number associated with the match type"
+      - name: team_type
+        description: "Type of teams playing (e.g., international, domestic)"
+      - name: format
+        description: "Format of the match"
+      - name: season
+        description: "Season in which the match was played"
+      - name: player_of_match
+        description: "Player of the match"
+      - name: match_dates
+        description: "Dates on which the match was played"
+      - name: num_days
+        description: "Number of days the match lasted"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5]
+      - name: venue
+        description: "Venue where the match was played"
+      - name: toss_winner
+        description: "Team that won the toss"
+      - name: toss_decision
+        description: "Decision made by the toss winner (bat/field)"
+      - name: outcome
+        description: "Outcome of the match"
+        tests:
+          - accepted_values:
+              values: ["win", "draw", "tie", "no result"]
+      - name: team1
+        description: "First team in the match"
+        tests:
+          - not_null
+      - name: team2
+        description: "Second team in the match"
+        tests:
+          - not_null
+      - name: winner
+        description: "Team that won the match"
+      - name: win_by_wickets
+        description: "Number of wickets by which the match was won"
+      - name: win_by_runs
+        description: "Number of runs by which the match was won"
+      - name: win_by_innings
+        description: "Number of innings by which the match was won"
+
+  - name: playing_xi
+    description: "Information about players in each match's playing XI"
+    columns:
+      - name: match_id
+        description: "Unique identifier for each match"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('match_details')
+              field: match_id
+      - name: player_id
+        description: "Unique identifier for each player"
+        tests:
+          - not_null
+      - name: player_name
+        description: "Name of the player"
+        tests:
+          - not_null
+      - name: team_name
+        description: "Name of the team the player belongs to"
+        tests:
+          - not_null
+          - accepted_values:
+              values: "{{ model.team1 }} + {{ model.team2 }}"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [match_id, player_id]
