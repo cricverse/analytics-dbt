@@ -64,3 +64,9 @@ You can visualize these relationships in the following diagrams:
 
 - **ERD (Entity Relationship Diagram)**: ![ERD](erd.png)
 - **DAG (Directed Acyclic Graph)**: ![DAG](dag.png)
+
+## Data Ingestion
+
+The raw match data is ingested into the `raw_matches` table using the code available in the [cricbit-hub repository](https://github.com/prateekb1912/cricbit-hub). This repository contains the necessary scripts and tools to fetch and load the cricket match data into our database.
+
+For more details on the data ingestion process and to access the source code, please visit the [cricbit-hub GitHub repository](https://github.com/prateekb1912/cricbit-hub).
