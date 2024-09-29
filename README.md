@@ -62,16 +62,5 @@ The relationships between these models are as follows:
 
 You can visualize these relationships in the following diagrams:
 
-- **ERD (Entity Relationship Diagram)**: See `erd.png` for a detailed view of the database schema and relationships between tables.
-- **DAG (Directed Acyclic Graph)**: See `dag.png` for a visualization of the dbt model dependencies and how data flows through the transformations.
-
-## Usage
-
-These models can be used to answer various questions about cricket matches, such as:
-
-1. Analyzing match outcomes and performance metrics.
-2. Studying player participation across different matches and teams.
-3. Investigating the impact of toss decisions on match results.
-4. Examining seasonal trends and tournament structures.
-
-To use these models, you can write SQL queries joining the relevant tables based on the `match_id` column. For example, to get the playing XI for a specific match along with the match details:
+- **ERD (Entity Relationship Diagram)**: ![ERD](erd.png)
+- **DAG (Directed Acyclic Graph)**: ![DAG](dag.png)
