@@ -13,6 +13,10 @@ models:
         description: "JSON data containing all match details"
         tests:
           - not_null
+      - name: deliveries
+        description: "JSON data containing ball-by-ball data"
+        tests:
+          - not_null
 
   - name: match_details
     description: "Detailed information about each cricket match"
