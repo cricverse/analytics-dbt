@@ -9,3 +9,4 @@ cricbit:
       dbname: "{{ env_var('DBT_DBNAME') }}"
       port: 5432
       sslmode: "require"
+      options: "?options=endpoint%3D{{ env_var('DBT_ENDPOINT_ID') }}
