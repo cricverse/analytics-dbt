@@ -15,6 +15,5 @@ package/
 
 .DS_Store
 
-profiles.yml
 .user.yml
 dbt_cloud.yml
