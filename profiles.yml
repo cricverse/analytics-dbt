@@ -8,4 +8,4 @@ cricbit:
       password: "{{ env_var('DBT_PASSWORD') }}"
       dbname: "{{ env_var('DBT_DBNAME') }}"
       port: 5432
-      sslmode: "{{ env_var('DBT_SSL_MODE', 'require') }}" # Default to 'require' if not set
+      sslmode: "require"
