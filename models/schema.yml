@@ -41,7 +41,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ["international", "club"]
+              values: ["club", "international"]
       - name: format
         description: "Format of the match"
       - name: season
@@ -106,8 +106,6 @@ models:
         description: "Name of the team the player belongs to"
         tests:
           - not_null
-          - accepted_values:
-              values: "{{ model.team1 }} + {{ model.team2 }}"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: [match_id, player_id]
