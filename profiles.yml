@@ -1,12 +1,12 @@
 cricbit:
-  target: dev
   outputs:
     dev:
-      type: postgres
-      host: "{{ env_var('DBT_HOST') }}"
-      user: "{{ env_var('DBT_USER') }}"
-      password: "{{ env_var('DBT_PASSWORD') }}"
-      dbname: "{{ env_var('DBT_DBNAME') }}"
+      dbname: dev_0cny
+      host: dpg-ct126kt6l47c73bbdtrg-a.ohio-postgres.render.com
+      pass: pvFUn2egsvGqvWEDHn9amVQynkOND4j0
       port: 5432
-      sslmode: "require"
-      options: "?options=endpoint%3D{{ env_var('DBT_ENDPOINT_ID') }}
+      schema: public
+      threads: 1
+      type: postgres
+      user: patrick
+  target: dev
