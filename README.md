@@ -1,70 +1,31 @@
 # Cricket Data Analysis Project
 
-This project contains a set of dbt models for analyzing cricket match data. The models transform raw match data into structured tables that can be used for various analyses and insights.
+This project is designed to facilitate the analysis of cricket match data through a collection of dbt models. These models process raw match data into organized tables, enabling various analyses and insights.
 
-## Available Models
+## Models Available
 
-### 1. raw_matches
+### Source Model
 
-This is the base model that contains the raw match data.
+1. raw_matches
 
-**Columns:**
+### Staging Models
 
-- match_id
-- match_data (JSONB containing all match details)
+2. stg_playing_xi
 
-### 2. match_details
+3. stg_deliveries
 
-This model extracts key information from the raw match data.
+4. stg_matches
 
-**Columns:**
+### Intermediate Models
 
-- match_id
-- series_name
-- match_num
-- match_stage
-- match_type
-- match_type_num
-- team_type
-- format
-- season
-- player_of_match
-- match_dates
-- num_days
-- venue
-- toss_winner
-- toss_decision
-- outcome
-- team1
-- team2
-- winner
-- win_by_wickets
-- win_by_runs
-- win_by_innings
+5. batting_match_stats
 
-### 3. playing_xi
+6. bowling_match_stats
 
-This model extracts the playing XI for each team in each match.
+## Data Relationships
 
-**Columns:**
-
-- match_id
-- player_id
-- player_name
-- team_name
-
-## Relationships
-
-The relationships between these models are as follows:
-
-1. `raw_matches` is the source for both `match_details` and `playing_xi`.
-2. `match_details` and `playing_xi` are linked by the `match_id` column.
-
-You can visualize these relationships in the following diagrams:
-
-- **ERD (Entity Relationship Diagram)**: ![ERD](erd.png)
 - **DAG (Directed Acyclic Graph)**: ![DAG](dag.png)
 
-## Data Ingestion
+## Data Integration
 
-The raw match data is ingested into the `raw_matches` table using the code available in the [cricbit repository](https://github.com/prateekb1912/cricbit). This repository contains the necessary scripts and tools to fetch and load the cricket match data into our database.
+The raw match data is loaded into the `raw_matches` table using the scripts and tools provided in the [cricbit-hub repository](https://github.com/prateekb1912/cricbit-hub). This repository offers the necessary resources to collect and integrate cricket match data into our database.
