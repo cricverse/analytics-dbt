@@ -67,4 +67,4 @@ You can visualize these relationships in the following diagrams:
 
 ## Data Ingestion
 
-The raw match data is ingested into the `raw_matches` table using the code available in the [cricbit-hub repository](https://github.com/prateekb1912/cricbit-hub). This repository contains the necessary scripts and tools to fetch and load the cricket match data into our database.
+The raw match data is ingested into the `raw_matches` table using the code available in the [cricbit repository](https://github.com/prateekb1912/cricbit). This repository contains the necessary scripts and tools to fetch and load the cricket match data into our database.
