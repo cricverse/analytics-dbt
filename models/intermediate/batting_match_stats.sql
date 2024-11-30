@@ -31,4 +31,4 @@ SELECT
     CASE WHEN balls_faced > 0 THEN ROUND((runs_scored*100.0 / balls_faced), 2) ELSE NULL END AS batting_strike_rate
 FROM batting_stats
 JOIN players ON batting_stats.batter = players.player_name 
-AND batting_stats.match_id = players.match_id;
+AND batting_stats.match_id = players.match_id

@@ -34,4 +34,4 @@ SELECT
     CASE WHEN wickets_taken > 0 THEN ROUND((balls_bowled*1.0 / wickets_taken), 2) ELSE NULL END AS bowling_strike_rate
 FROM bowling_stats
 JOIN players ON bowling_stats.bowler = players.player_name
-AND bowling_stats.match_id = players.match_id;
+AND bowling_stats.match_id = players.match_id
