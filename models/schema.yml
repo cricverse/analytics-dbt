@@ -18,7 +18,7 @@ models:
         tests:
           - not_null
 
-  - name: match_details
+  - name: stg_matches
     description: "Detailed information about each cricket match"
     columns:
       - name: match_id
@@ -84,7 +84,7 @@ models:
       - name: win_by_innings
         description: "Number of innings by which the match was won"
 
-  - name: playing_xi
+  - name: stg_playing_xi
     description: "Information about players in each match's playing XI"
     columns:
       - name: match_id
@@ -109,3 +109,101 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: [match_id, player_id]
+
+  - name: stg_deliveries
+    description: "Ball-by-ball data for each match"
+    columns:
+      - name: match_id
+        description: "Unique identifier for each match"
+        tests:
+          - not_null
+      - name: inning
+        description: "Inning number"
+        tests:
+          - not_null
+      - name: batting_team
+        description: "Team batting at the time of the delivery"
+        tests:
+          - not_null
+      - name: over
+        description: "Over number"
+        tests:
+          - not_null
+          - integer
+      - name: ball
+        description: "Ball number"
+        tests:
+          - not_null
+          - integer
+      - name: batter
+        description: "Batter on strike"
+        tests:
+          - not_null
+      - name: bowler
+        description: "Bowler who bowled the delivery"
+        tests:
+          - not_null
+      - name: runs_total
+        description: "Total runs scored from the delivery"
+        tests:
+          - not_null
+          - integer
+      - name: runs_batter
+        description: "Runs scored by the batter"
+        tests:
+          - not_null
+          - integer
+      - name: runs_extras
+        description: "Runs scored from extras (byes, wides, etc.)"
+        tests:
+          - not_null
+          - integer
+      - name: non_striker
+        description: "Non-striker on the field"
+        tests:
+          - not_null
+      - name: is_wicket
+        description: "Whether the delivery resulted in a wicket"
+        tests:
+          - not_null
+          - boolean
+      - name: wicket_type
+        description: "Type of wicket (if any)"
+        tests:
+          - accepted_values:
+              values:
+                [
+                  "caught",
+                  "bowled",
+                  "lbw",
+                  "stumped",
+                  "hit wicket",
+                  "obstructing the field",
+                  "run out",
+                  "retired hurt",
+                  "handled the ball",
+                ]
+      - name: player_dismissed
+        description: "Player dismissed (if any)"
+      - name: fielders
+        description: "Fielders involved in the dismissal (if any)"
+      - name: wide_runs
+        description: "Runs scored from a wide"
+        tests:
+          - not_null
+          - integer
+      - name: bye_runs
+        description: "Runs scored from a bye"
+        tests:
+          - not_null
+          - integer
+      - name: legbye_runs
+        description: "Runs scored from a legbye"
+        tests:
+          - not_null
+          - integer
+      - name: noball_runs
+        description: "Runs scored from a noball"
+        tests:
+          - not_null
+          - integer
