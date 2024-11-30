@@ -179,6 +179,7 @@ models:
                   "run out",
                   "retired hurt",
                   "handled the ball",
+                  null,
                 ]
       - name: player_dismissed
         description: "Player dismissed (if any)"
