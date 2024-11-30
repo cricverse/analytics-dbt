@@ -34,7 +34,7 @@ SELECT
     match_id,
     inning,
     batting_team,
-    over::int AS over,
+    over,
     row_number() over(PARTITION BY match_id, inning, over) AS ball,
     deliveries->>'batter' AS batter,
     deliveries->>'bowler' AS bowler,
