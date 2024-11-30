@@ -1,6 +1,6 @@
 {{ config({
     "materialized": "incremental",
-    "unique_key": ["batter"]
+    "unique_key": ["bowler"]
 }) }}
 
 WITH player_stats AS (
