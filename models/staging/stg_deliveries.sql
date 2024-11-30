@@ -48,8 +48,9 @@ SELECT
     deliveries->'wickets'->0->>'fielders' AS fielders,
 
     COALESCE(deliveries->'extras'->>'wides', '0')::int AS wide_runs,
-    COALESCE(deliveries->'extras'->>'no_balls', '0')::int AS noball_runs,
+    COALESCE(deliveries->'extras'->>'noballs', '0')::int AS noball_runs,
     COALESCE(deliveries->'extras'->>'byes', '0')::int AS bye_runs,
     COALESCE(deliveries->'extras'->>'legbyes', '0')::int AS legbye_runs
 
 FROM overs_data
+ORDER BY noball_runs DESC, wide_runs DESC
