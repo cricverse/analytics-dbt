@@ -166,21 +166,6 @@ models:
           - not_null
       - name: wicket_type
         description: "Type of wicket (if any)"
-        tests:
-          - accepted_values:
-              values:
-                [
-                  "caught",
-                  "bowled",
-                  "lbw",
-                  "stumped",
-                  "hit wicket",
-                  "obstructing the field",
-                  "run out",
-                  "retired hurt",
-                  "handled the ball",
-                  null,
-                ]
       - name: player_dismissed
         description: "Player dismissed (if any)"
       - name: fielders
