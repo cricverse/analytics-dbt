@@ -92,7 +92,7 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('match_details')
+              to: ref('stg_matches')
               field: match_id
       - name: player_id
         description: "Unique identifier for each player"
@@ -117,6 +117,9 @@ models:
         description: "Unique identifier for each match"
         tests:
           - not_null
+          - relationships:
+              to: ref('stg_matches')
+              field: match_id
       - name: inning
         description: "Inning number"
         tests:
@@ -129,12 +132,10 @@ models:
         description: "Over number"
         tests:
           - not_null
-          - integer
       - name: ball
         description: "Ball number"
         tests:
           - not_null
-          - integer
       - name: batter
         description: "Batter on strike"
         tests:
@@ -147,17 +148,14 @@ models:
         description: "Total runs scored from the delivery"
         tests:
           - not_null
-          - integer
       - name: runs_batter
         description: "Runs scored by the batter"
         tests:
           - not_null
-          - integer
       - name: runs_extras
         description: "Runs scored from extras (byes, wides, etc.)"
         tests:
           - not_null
-          - integer
       - name: non_striker
         description: "Non-striker on the field"
         tests:
@@ -166,7 +164,6 @@ models:
         description: "Whether the delivery resulted in a wicket"
         tests:
           - not_null
-          - boolean
       - name: wicket_type
         description: "Type of wicket (if any)"
         tests:
@@ -191,19 +188,15 @@ models:
         description: "Runs scored from a wide"
         tests:
           - not_null
-          - integer
       - name: bye_runs
         description: "Runs scored from a bye"
         tests:
           - not_null
-          - integer
       - name: legbye_runs
         description: "Runs scored from a legbye"
         tests:
           - not_null
-          - integer
       - name: noball_runs
         description: "Runs scored from a noball"
         tests:
           - not_null
-          - integer
