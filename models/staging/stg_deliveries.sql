@@ -13,10 +13,11 @@ WITH delivery_data AS (
 innings_data AS (
     SELECT
         match_id,
-        ROW_NUMBER() OVER() AS inning,
+        ROW_NUMBER() OVER(PARTITION BY match_id) AS inning,
         delivery->>'team' AS batting_team,
         jsonb_array_elements(delivery->'overs') AS overs
     FROM delivery_data
+    GROUP BY match_id, delivery
 ),
 
 overs_data AS (
@@ -33,8 +34,8 @@ SELECT
     match_id,
     inning,
     batting_team,
-    over,
-    row_number() over() AS ball,
+    over::int AS over,
+    row_number() over(PARTITION BY match_id, inning, over) AS ball,
     deliveries->>'batter' AS batter,
     deliveries->>'bowler' AS bowler,
     (deliveries->'runs'->>'total')::int AS runs_total,
@@ -53,4 +54,4 @@ SELECT
     COALESCE(deliveries->'extras'->>'legbyes', '0')::int AS legbye_runs
 
 FROM overs_data
-ORDER BY noball_runs DESC, wide_runs DESC
+ORDER BY over DESC
