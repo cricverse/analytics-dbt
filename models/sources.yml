@@ -3,6 +3,9 @@ version: 2
 sources:
   - name: raw
     schema: public
+    freshness:
+      warn_after: 7 days
+      error_after: 10 days
     tables:
       - name: raw_matches
         description: "Raw data for match information."
