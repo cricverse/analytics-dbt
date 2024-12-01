@@ -1,6 +1,6 @@
 {{ config({
     "materialized": "incremental",
-    "unique_key": ["bowler"]
+    "unique_key": ["match_id", "inning", "bowler"]
 }) }}
 
 WITH player_stats AS (

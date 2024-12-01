@@ -1,3 +1,8 @@
+{{ config({
+    "materialized": "incremental",
+    "unique_key": ["match_id", "player_id"]
+}) }}
+
 WITH raw_data AS (
     SELECT match_id, match_data
     FROM {{ ref('raw_matches') }}

@@ -26,6 +26,9 @@ models:
         tests:
           - unique
           - not_null
+        relationships:
+          to: ref('raw_matches')
+          field: match_id
       - name: series_name
         description: "Name of the series or tournament"
       - name: match_num
@@ -92,7 +95,7 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_matches')
+              to: ref('raw_matches')
               field: match_id
       - name: player_id
         description: "Unique identifier for each player"
@@ -118,7 +121,7 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_matches')
+              to: ref('raw_matches')
               field: match_id
       - name: inning
         description: "Inning number"
@@ -186,3 +189,6 @@ models:
         description: "Runs scored from a noball"
         tests:
           - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [match_id, inning, over, ball]
