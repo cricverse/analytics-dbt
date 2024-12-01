@@ -46,7 +46,7 @@ SELECT
     CASE WHEN deliveries->'wickets'->0 IS NOT NULL THEN TRUE ELSE FALSE END AS is_wicket,
     deliveries->'wickets'->0->>'kind' AS wicket_type,
     deliveries->'wickets'->0->>'player_out' AS player_dismissed,
-    deliveries->'wickets'->0->>'fielders' AS fielders,
+    deliveries->'wickets'->0->'fielders' AS fielders,
 
     COALESCE(deliveries->'extras'->>'wides', '0')::int AS wide_runs,
     COALESCE(deliveries->'extras'->>'noballs', '0')::int AS noball_runs,

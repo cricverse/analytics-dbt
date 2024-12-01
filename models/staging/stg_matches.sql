@@ -10,7 +10,6 @@ SELECT
     match_data->'event'->>'name' AS series_name,
     match_data->'event'->>'match_number' AS match_num,
     match_data->'event'->>'stage' AS match_stage,
-    match_data->>'match_type' AS match_type,
     match_data->>'match_type_number' AS match_type_num,
     match_data->>'team_type' AS team_type,
     match_data->>'match_type' AS format,
