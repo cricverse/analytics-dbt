@@ -236,9 +236,33 @@ models:
         description: "Whether the player was dismissed"
         tests:
           - not_null
+      - name: wicket_type
+        description: "How the batter was dismissed (if dismissed)"
+        tests:
+          - accepted_values:
+              values:
+                [
+                  "bowled",
+                  "caught",
+                  "lbw",
+                  "run out",
+                  "stumped",
+                  "hit wicket",
+                  "not out",
+                  "obstructing the field",
+                  "retired hurt",
+                  "handled the ball",
+                  "retired out",
+                ]
+      - name: bowler
+        description: "Bowler who took the wicket (if applicable)"
+      - name: fielders
+        description: "Array of fielders involved in dismissal (if applicable)"
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: [match_id, player_id, inning]
+      - dbt_utils.expression_is_true:
+          expression: "runs_scored >= (fours * 4 + sixes * 6)"
   - name: bowling_match_stats
     description: "Bowling statistics for each player in an innings"
     columns:
@@ -304,15 +328,49 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
 
-      - name: wides
-        description: "Runs conceded from wides"
+      - name: wide_runs
+        description: "Runs conceded by the bowler from wides"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: noball_runs
+        description: "Runs conceded by the bowler from no-balls"
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 0
 
-      - name: no_balls
-        description: "Runs conceded from no-balls"
+      - name: wide_balls
+        description: "Number of wides bowled by the bowler"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: noballs
+        description: "Number of no-balls bowled by the bowler"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: five_wides
+        description: "Number of 5wide deliveries bowled by the bowler"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: dot_balls
+        description: "Number of dot balls bowled by the bowler"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: maidens
+        description: "Number of maiden overs bowled by the bowler"
         tests:
           - not_null
           - dbt_utils.accepted_range:

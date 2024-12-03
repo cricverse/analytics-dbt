@@ -15,9 +15,12 @@ player_dismissed AS (
     SELECT 
         match_id,
         inning,
-        player_dismissed
+        player_dismissed,
+        wicket_type,
+        bowler,
+        fielders
     FROM player_stats
-    GROUP BY match_id, inning, player_dismissed
+    GROUP BY match_id, inning, player_dismissed, wicket_type, bowler, fielders
 ),
 batting_stats AS (
     SELECT 
@@ -34,10 +37,13 @@ GROUP BY match_id, inning, batter
 player_dismissed_stats AS (
 SELECT 
     batting_stats.*,
-    CASE WHEN player_dismissed.player_dismissed IS NOT NULL THEN 1 ELSE 0 END AS dismissed
+    CASE WHEN player_dismissed.player_dismissed IS NOT NULL THEN 1 ELSE 0 END AS dismissed,
+    CASE WHEN player_dismissed.wicket_type IS NOT NULL THEN player_dismissed.wicket_type ELSE 'not out' END AS wicket_type,
+    CASE WHEN player_dismissed.bowler IS NOT NULL THEN player_dismissed.bowler ELSE NULL END AS bowler,
+    CASE WHEN player_dismissed.fielders IS NOT NULL THEN player_dismissed.fielders ELSE NULL END AS fielders
 FROM player_dismissed
 RIGHT JOIN batting_stats ON player_dismissed.match_id = batting_stats.match_id 
-AND player_dismissed.inning = batting_stats.inning 
+AND player_dismissed.inning = batting_stats.inning
 AND player_dismissed.player_dismissed = batting_stats.batter
 )
 SELECT 
