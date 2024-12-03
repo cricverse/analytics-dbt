@@ -7,7 +7,7 @@ WITH raw_data AS (
     SELECT 
         match_id, 
         match_data
-    FROM {{ ref('raw_matches') }}
+    FROM {{ ref('raw_data') }}
 )
 
 SELECT

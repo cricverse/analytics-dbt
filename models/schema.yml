@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: raw_matches
+  - name: raw_data
     description: "Raw match data from the source"
     columns:
       - name: match_id
@@ -27,7 +27,7 @@ models:
           - unique
           - not_null
         relationships:
-          to: ref('raw_matches')
+          to: ref('raw_data')
           field: match_id
       - name: series_name
         description: "Name of the series or tournament"
@@ -95,7 +95,7 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('raw_matches')
+              to: ref('raw_data')
               field: match_id
       - name: player_id
         description: "Unique identifier for each player"
@@ -121,7 +121,7 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('raw_matches')
+              to: ref('raw_data')
               field: match_id
       - name: inning
         description: "Inning number"
@@ -192,3 +192,144 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: [match_id, inning, over, ball]
+
+  - name: batting_match_stats
+    description: "Batting statistics for each player in an innings"
+    columns:
+      - name: match_id
+        description: "Unique identifier for each match"
+        tests:
+          - not_null
+      - name: player_id
+        description: "Unique identifier for each player"
+        tests:
+          - not_null
+      - name: inning
+        description: "Inning number"
+        tests:
+          - not_null
+      - name: batter
+        description: "Batter name"
+        tests:
+          - not_null
+      - name: runs_scored
+        description: "Total runs scored by the player"
+        tests:
+          - not_null
+      - name: balls_faced
+        description: "Number of balls faced by the player"
+        tests:
+          - not_null
+      - name: fours
+        description: "Number of fours hit by the player"
+        tests:
+          - not_null
+      - name: sixes
+        description: "Number of sixes hit by the player"
+        tests:
+          - not_null
+      - name: batting_strike_rate
+        description: "Strike rate of the player"
+        tests:
+          - not_null
+      - name: dismissed
+        description: "Whether the player was dismissed"
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [match_id, player_id, inning]
+  - name: bowling_match_stats
+    description: "Bowling statistics for each player in an innings"
+    columns:
+      - name: match_id
+        description: "Unique identifier for each match"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('raw_data')
+              field: match_id
+
+      - name: player_id
+        description: "Unique identifier for each player"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_playing_xi')
+              field: player_id
+
+      - name: inning
+        description: "Inning number"
+        tests:
+          - not_null
+
+      - name: bowler
+        description: "Bowler name"
+        tests:
+          - not_null
+
+      - name: runs_conceded
+        description: "Total runs conceded by the bowler"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: balls_bowled
+        description: "Number of legal deliveries bowled (excluding wides and no-balls)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: wickets_taken
+        description: "Number of wickets taken by the bowler (excluding run-outs and other non-bowler dismissals)"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10
+
+      - name: fours_conceded
+        description: "Number of boundary fours conceded by the bowler"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: sixes_conceded
+        description: "Number of boundary sixes conceded by the bowler"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: wides
+        description: "Runs conceded from wides"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: no_balls
+        description: "Runs conceded from no-balls"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: economy
+        description: "Runs conceded per over (runs_conceded * 6 / balls_bowled)"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: bowling_strike_rate
+        description: "Average number of balls bowled per wicket taken"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [match_id, player_id, inning]
