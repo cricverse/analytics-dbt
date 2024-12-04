@@ -1,0 +1,12 @@
+name: Generate Seeds
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-seeds:
+    runs-on: ubuntu-latest
+    steps:
+      - run: python seeds/generate_seed.py
