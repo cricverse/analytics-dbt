@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -27,4 +29,9 @@ jobs:
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
           git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update seeds CSV" && git push)
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit --amend --no-edit
+            git push --force
+          fi
