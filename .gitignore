@@ -4,7 +4,6 @@ dbt_packages/
 logs/
 data/
 
-*.csv
 *.zip
 
 package/

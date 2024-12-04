@@ -11,15 +11,19 @@ players AS (
     SELECT *
     FROM {{ ref('stg_playing_xi') }}
 ),
+dismissals AS (
+    SELECT *
+    FROM {{ ref('dismissals') }}
+),
 bowling_stats AS (
     SELECT
         match_id,
         inning,
         bowler,
-        SUM(runs_batter) AS runs_conceded,
-        COUNT(*) AS balls_bowled,
-        SUM(CASE WHEN wicket_type NOT IN ('run out', 'retired hurt', 'obstructing the field', 'handled the ball') 
-            THEN 1 ELSE 0 END) AS wickets_taken,
+        SUM(runs_batter + wide_runs + noball_runs) AS runs_conceded,
+        COUNT(*) - COUNT(CASE WHEN wide_runs > 0 THEN 1 END) - COUNT(CASE WHEN noball_runs > 0 THEN 1 END) AS balls_bowled,
+        SUM(CASE WHEN wicket_type IS NOT NULL 
+            AND d.is_bowler_wicket = true THEN 1 ELSE 0 END) AS wickets_taken,
         COUNT(CASE WHEN runs_batter = 4 THEN 1 END) AS fours_conceded,
         COUNT(CASE WHEN runs_batter = 6 THEN 1 END) AS sixes_conceded,
         SUM(wide_runs) AS wide_runs,
@@ -29,6 +33,8 @@ bowling_stats AS (
         COUNT(CASE WHEN wide_runs = 5 THEN 1 END) AS five_wides,
         COUNT(CASE WHEN runs_batter + wide_runs + noball_runs = 0 THEN 1 END) AS dot_balls
     FROM deliveries
+    LEFT JOIN dismissals d 
+        ON d.dismissal_type = deliveries.wicket_type
     GROUP BY match_id, inning, bowler
 ),
 maiden_stats AS (

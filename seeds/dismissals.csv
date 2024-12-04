@@ -1,0 +1,14 @@
+dismissal_type,is_bowler_wicket
+bowled,true
+caught,true
+lbw,true
+stumped,true
+hit wicket,true
+caught and bowled,true
+run out,false
+retired hurt,false
+obstructing the field,false
+hit the ball twice,false
+handled the ball,false
+timed out,false
+retired out,false
