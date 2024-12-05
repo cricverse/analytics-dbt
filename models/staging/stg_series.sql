@@ -16,3 +16,4 @@ SELECT
 FROM matches,
     UNNEST(ARRAY[team1, team2]) AS team
 GROUP BY series_name, season
+WHERE series_name IS NOT NULL
