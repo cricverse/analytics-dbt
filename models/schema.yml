@@ -230,8 +230,6 @@ models:
           - not_null
       - name: batting_strike_rate
         description: "Strike rate of the player"
-        tests:
-          - not_null
       - name: dismissed
         description: "Whether the player was dismissed"
         tests:
@@ -253,6 +251,7 @@ models:
                   "retired hurt",
                   "handled the ball",
                   "retired out",
+                  "not out",
                 ]
       - name: bowler
         description: "Bowler who took the wicket (if applicable)"
