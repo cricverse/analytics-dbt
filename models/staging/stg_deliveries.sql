@@ -10,6 +10,15 @@ WITH
             jsonb_array_elements(deliveries) AS delivery
         FROM {{ ref('raw_data') }}
     ),
+
+    teams AS (
+    SELECT 
+        match_id,
+        ARRAY_AGG(DISTINCT delivery->>'team' ORDER BY delivery->>'team') AS teams
+    FROM 
+        delivery_data
+    GROUP BY match_id
+    ),
     
     innings_data AS (
         SELECT 
@@ -26,18 +35,19 @@ WITH
             match_id,
             inning,
             batting_team,
-            overs->>'over' AS over,
+            (overs->>'over')::int AS over,
             jsonb_array_elements(overs->'deliveries') AS deliveries
         FROM innings_data
     ),
     
     deliveries_data AS (
         SELECT 
-            match_id,
+            overs_data.match_id,
             inning,
-            batting_team,
             over,
-            row_number() over(PARTITION BY match_id, inning, over) AS ball,
+            batting_team,
+            (SELECT team FROM unnest(teams) AS team WHERE team != batting_team) AS bowling_team,
+            row_number() over(PARTITION BY overs_data.match_id, inning, over) AS ball,
             deliveries->>'batter' AS batter,
             deliveries->>'bowler' AS bowler,
             (deliveries->'runs'->>'total')::int AS runs_total,
@@ -53,6 +63,8 @@ WITH
             COALESCE((deliveries->'extras'->>'byes')::int, 0) AS bye_runs,
             COALESCE((deliveries->'extras'->>'legbyes')::int, 0) AS legbye_runs
         FROM overs_data
+        JOIN teams
+        ON overs_data.match_id = teams.match_id
     ),
     
     fielders_data AS (
@@ -73,6 +85,7 @@ SELECT
     d.match_id,
     d.inning,
     d.batting_team,
+    d.bowling_team,
     d.over,
     d.ball,
     d.batter,

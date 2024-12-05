@@ -20,6 +20,7 @@ bowling_stats AS (
         match_id,
         inning,
         bowler,
+        bowling_team AS team,
         SUM(runs_batter + wide_runs + noball_runs) AS runs_conceded,
         COUNT(*) - COUNT(CASE WHEN wide_runs > 0 THEN 1 END) - COUNT(CASE WHEN noball_runs > 0 THEN 1 END) AS balls_bowled,
         SUM(CASE WHEN wicket_type IS NOT NULL 
@@ -35,7 +36,7 @@ bowling_stats AS (
     FROM deliveries
     LEFT JOIN dismissals d 
         ON d.dismissal_type = deliveries.wicket_type
-    GROUP BY match_id, inning, bowler
+    GROUP BY match_id, inning, bowler, team
 ),
 maiden_stats AS (
     SELECT 
