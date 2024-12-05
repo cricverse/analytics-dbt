@@ -12,6 +12,7 @@ SELECT
     series_name,
     season,
     ARRAY_AGG(DISTINCT format ORDER BY format) AS formats,
-    ARRAY_AGG(DISTINCT team1 ORDER BY team1) || ARRAY_AGG(DISTINCT team2 ORDER BY team2) AS teams
-FROM matches
+    ARRAY_AGG(DISTINCT team ORDER BY team) AS teams
+FROM matches,
+    UNNEST(ARRAY[team1, team2]) AS team
 GROUP BY series_name, season
