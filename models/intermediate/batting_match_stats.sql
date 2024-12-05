@@ -53,7 +53,7 @@ batting_stats AS (
         COUNT(CASE WHEN runs_batter = 4 THEN 1 END) AS fours, -- Simplified CASE
         COUNT(CASE WHEN runs_batter = 6 THEN 1 END) AS sixes  -- Simplified CASE
     FROM player_stats
-    GROUP BY 1, 2, 3, 4
+    GROUP BY 1, 2, 3, 4, 5
 ),
 
 -- Combine batting stats with dismissal information
