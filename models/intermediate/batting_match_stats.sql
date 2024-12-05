@@ -60,7 +60,7 @@ batting_stats AS (
 player_dismissed_stats AS (
     SELECT 
         b.*,
-        COALESCE(pd.player_dismissed IS NOT NULL, FALSE) AS dismissed,
+        CASE WHEN pd.player_dismissed IS NOT NULL THEN 1 ELSE 0 END AS dismissed,
         COALESCE(pd.wicket_type, 'not out') AS wicket_type,
         pd.bowler,
         pd.fielders
