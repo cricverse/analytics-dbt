@@ -15,5 +15,5 @@ SELECT
     ARRAY_AGG(DISTINCT team ORDER BY team) AS teams
 FROM matches,
     UNNEST(ARRAY[team1, team2]) AS team
-GROUP BY series_name, season
 WHERE series_name IS NOT NULL
+GROUP BY series_name, season
