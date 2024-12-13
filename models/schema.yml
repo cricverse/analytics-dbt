@@ -245,6 +245,7 @@ models:
                   "lbw",
                   "run out",
                   "stumped",
+                  "caught and bowled",
                   "hit wicket",
                   "retired hurt",
                   "retired out",

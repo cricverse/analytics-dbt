@@ -7,14 +7,16 @@ WITH
     delivery_data AS (
         SELECT 
             match_id,
-            jsonb_array_elements(deliveries) AS delivery
-        FROM {{ ref('raw_data') }}
+            ordinality AS inning,
+            delivery
+        FROM {{ ref('raw_data') }},
+        jsonb_array_elements(deliveries) WITH ORDINALITY AS t(delivery, ordinality)
     ),
 
     teams AS (
     SELECT 
         match_id,
-        ARRAY_AGG(DISTINCT delivery->>'team' ORDER BY delivery->>'team') AS teams
+        ARRAY_AGG(DISTINCT delivery->>'team') AS teams
     FROM 
         delivery_data
     GROUP BY match_id
@@ -23,11 +25,11 @@ WITH
     innings_data AS (
         SELECT 
             match_id,
-            ROW_NUMBER() OVER(PARTITION BY match_id) AS inning,
+            inning,
             delivery->>'team' AS batting_team,
             jsonb_array_elements(delivery->'overs') AS overs
         FROM delivery_data
-        GROUP BY match_id, delivery
+        GROUP BY match_id, inning, delivery
     ),
     
     overs_data AS (
