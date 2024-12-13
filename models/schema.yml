@@ -246,11 +246,13 @@ models:
                   "run out",
                   "stumped",
                   "hit wicket",
-                  "not out",
-                  "obstructing the field",
                   "retired hurt",
-                  "handled the ball",
                   "retired out",
+                  "retired not out",
+                  "obstructing the field",
+                  "handled the ball",
+                  "hit the ball twice",
+                  "timed out",
                   "not out",
                 ]
       - name: bowler

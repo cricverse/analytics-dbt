@@ -77,6 +77,7 @@ SELECT
     pds.match_id,
     pds.inning,
     pds.team,
+    pds.opponent,
     pds.batter,
     pds.runs_scored,
     pds.balls_faced,

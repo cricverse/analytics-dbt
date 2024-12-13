@@ -61,7 +61,8 @@ WITH
             COALESCE((deliveries->'extras'->>'wides')::int, 0) AS wide_runs,
             COALESCE((deliveries->'extras'->>'noballs')::int, 0) AS noball_runs,
             COALESCE((deliveries->'extras'->>'byes')::int, 0) AS bye_runs,
-            COALESCE((deliveries->'extras'->>'legbyes')::int, 0) AS legbye_runs
+            COALESCE((deliveries->'extras'->>'legbyes')::int, 0) AS legbye_runs,
+            COALESCE((deliveries->'extras'->>'penalty')::int, 0) AS penalty_runs
         FROM overs_data
         JOIN teams
         ON overs_data.match_id = teams.match_id
