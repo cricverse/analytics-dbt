@@ -5,7 +5,6 @@ sources:
     schema: public
     freshness:
       warn_after: { count: 7, period: day }
-      error_after: { count: 10, period: day }
     loaded_at_field: created_at
     tables:
       - name: raw_matches
