@@ -24,7 +24,7 @@ SELECT
     match_data->'event'->>'match_number' AS match_num,
     match_data->'event'->>'stage' AS match_stage,
     match_data->>'match_type_number' AS match_type_num,
-    match_format.match_format AS match_format,
+    get_match_format(match_format.match_type, match_format.team_type) AS match_format,
     match_data->>'season' AS season,
     match_data->>'player_of_match' AS player_of_match,
     match_data->>'dates' AS match_dates,
