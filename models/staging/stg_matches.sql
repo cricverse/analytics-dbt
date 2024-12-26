@@ -19,7 +19,7 @@ match_format AS (
 )
 
 SELECT
-    match_id,
+    raw_data.match_id,
     match_data->'event'->>'name' AS series_name,
     match_data->'event'->>'match_number' AS match_num,
     match_data->'event'->>'stage' AS match_stage,
